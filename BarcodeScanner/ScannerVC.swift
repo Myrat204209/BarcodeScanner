@@ -9,8 +9,8 @@ import UIKit
 import AVFoundation
 
 enum CameraError : String {
-    case invalidDeviceInput = "Something is wrong with the camera. We are unable to capture the input."
-    case invalidScannedValue = "The value scanned is not valid. This app scans EAN-8 and EAN-13"
+    case invalidDeviceInput
+    case invalidScannedValue
 }
 protocol ScannerVCDelegate : AnyObject {
     func didFind(barcode : String)
@@ -80,7 +80,9 @@ final class ScannerVC : UIViewController {
         previewLayer!.videoGravity = .resizeAspectFill
         view.layer.addSublayer(previewLayer!)
         
-        captureSession.startRunning()
+        DispatchQueue.global(qos: .background).async {
+                self.captureSession.startRunning()
+            }
         
     }
 }
@@ -104,6 +106,7 @@ extension ScannerVC : AVCaptureMetadataOutputObjectsDelegate {
             return
         }
         
+//        captureSession.stopRunning()
         scannerDelegate?.didFind(barcode: barcode)
     }
     
